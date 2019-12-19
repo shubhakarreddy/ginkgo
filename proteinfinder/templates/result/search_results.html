@@ -1,0 +1,71 @@
+<head>
+  <style>
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #87CEFA;
+    }
+
+    li {
+      float: left;
+    }
+
+    li a {
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+    }
+
+    li a:hover:not(.active) {
+      background-color: #DC143C;
+    }
+
+    .active {
+      background-color: #191970;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Welcome to protein finder!</h2>
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a class="active" href="/search_results">Search Results</a></li>
+    <li><a href="/show_samples">Sample</a></li>
+  </ul>
+
+  {% if message %}
+    <div>
+      <p>{{ message }}</p>
+    </div>
+  {% endif %}
+
+  {% if searches %}
+    <table style="width:100%">
+      <tr>
+        <th>JOB ID</th>
+        <<th>STATUS</th>
+        <th>SAMPLE ID</th>
+        <th>PROTEIN ID</th>
+        <th>PROTEIN POSITION</th>
+        <th>DNA SEQ</th>
+      </tr>
+      <ul>
+        {% for search in searches %}
+          <tr>
+            <td>{{ search.id }}</td>
+            <td>{{ search.status }}</td>
+            <td>{{ search.sample_id }}</td>
+            <td>{{ search.protein_id }}</td>
+            <td>{{ search.protein_pos }}</td>
+            <td>{{ search.dna_seq }}</td>
+          </tr>
+        {% endfor %}
+      </ul>
+    </table>
+  {% endif %}
+</body>

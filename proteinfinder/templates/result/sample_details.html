@@ -1,0 +1,77 @@
+<head>
+  <style>
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #87CEFA;
+    }
+
+    li {
+      float: left;
+    }
+
+    li a {
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+    }
+
+    li a:hover:not(.active) {
+      background-color: #DC143C;
+    }
+
+    .active {
+      background-color: #191970;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Welcome to protein finder!</h2>
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/search_results">Search Results</a></li>
+    <li><a class="active" href="/show_samples">Sample</a></li>
+  </ul>
+
+  {% if sample_id %}
+    <div>
+      <p>Sample ID: {{ sample_id }}</p>
+    </div>
+    <table style="width:100%">
+      <tr>
+        <th>protein_ID</th>
+        <th>start_pos</th>
+        <th>end_pos</th>
+        <th>protein_seq</th>
+      </tr>
+      {% if proteins %}
+        <ul>
+          {% for protein in proteins %}
+            <tr>
+              <td>{{ protein.protein_id }}</td>
+              <td>{{ protein.start_pos }}</td>
+              <td>{{ protein.end_pos }}</td>
+              <td>{{ protein.protein_seq }}</td>
+            </tr>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    </table>
+  {% endif %}
+
+  {% if display_all %}
+    <div>
+      <p>Samples</p>
+    </div>
+    <div>
+      {% for sample in samples %}
+        <a href="{{ sample.href }}">{{ sample.sample_id }}</a><br>
+      {% endfor %}
+    </div>
+  {% endif %}
+</body>

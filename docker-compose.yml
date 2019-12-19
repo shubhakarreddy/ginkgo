@@ -1,0 +1,64 @@
+version: "3"
+
+services:
+  db:
+    hostname: mysql
+    image: mysql:latest
+    environment:
+      - MYSQL_DATABASE=Proteins
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=pacman
+      - MYSQL_ROOT_PASSWORD=pacman
+      - MYSQL_ROOT_HOST=%
+    ports:
+      - "3306:3306"
+
+  message-queue:
+    hostname: rabbitmq
+    image: rabbitmq:latest
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=pacman
+    ports:
+      - "5672:5672"
+
+  async-worker:
+    hostname: celery
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - LC_ALL=C.UTF-8
+      - LANG=C.UTF-8
+    volumes:
+      - ./:/home
+    links:
+      - message-queue
+    depends_on:
+      - db
+      - message-queue
+    restart: on-failure
+    command: python3 -m celery worker --uid 0 -A ginkgo -l info
+
+  web:
+    hostname: django
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - LC_ALL=C.UTF-8
+      - LANG=C.UTF-8
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./:/home
+    links:
+      - db:mysql
+      - message-queue:rmq
+      - async-worker:celery
+    depends_on:
+      - db
+      - message-queue
+      - async-worker
+    restart: on-failure
+    command: bash -c "python3 manage.py makemigrations && python3 manage.py migrate && python3 manage.py runserver 0.0.0.0:8000"

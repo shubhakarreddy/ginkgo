@@ -1,0 +1,76 @@
+<head>
+  {% if cookie_id and cookie_name %}
+    <script type="text/javascript">
+      var cookie_id = "{{ cookie_id }}";
+      var cookie_name = "{{ cookie_name }}";
+      var d = new Date();
+      d.setTime(d.getTime() + (365*24*60*60*1000));
+      var expires = "expires="+ d.toUTCString();
+      document.cookie = cookie_name + "=" + cookie_id + ";" + expires + ";path=/";
+    </script>
+  {% endif %}
+
+  <style>
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #87CEFA;
+    }
+
+    li {
+      float: left;
+    }
+
+    li a {
+      display: block;
+      color: white;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+    }
+
+    li a:hover:not(.active) {
+      background-color: #DC143C;
+    }
+
+    .active {
+      background-color: #191970;
+    }
+  </style>
+</head>
+
+<body>
+  <h2>Welcome to protein finder!</h2>
+  <ul>
+    <li><a class="active" href="/">Home</a></li>
+    <li><a href="/search_results">Search Results</a></li>
+    <li><a href="/show_samples">Sample</a></li>
+  </ul>
+
+  <div>
+    {% if message %}
+      <p style="color:blue;">{{ message }}</p>
+    {% endif %}
+  </div>
+  <div>
+    <form class="form" action="{% url 'fetch_data' %}" method="post">
+      {% csrf_token %}
+      <h3>Add sample from NCBI</h3>
+      Sample ID:<br>
+      <input type="text" name="sample_id"><br>
+      <input type="submit" value="Add Sample">
+    </form>
+  </div>
+
+  <div>
+    <form class="form" action="{% url 'find_protein' %}" method="post">
+      {% csrf_token %}
+      <h3>Search protein containing DNA seq</h3>
+      DNA sequence:<br>
+      <input type="text" name="dna_seq"><br>
+      <input type="submit" value="Search">
+    </form>
+  </div>
+</body>
